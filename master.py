@@ -205,9 +205,9 @@ def live_plotter():
     global odcsvs
     global pumpcsvs
     for starti in range(len(morbidostats)):
-       temp_locs = morbidostats[starti][0].file_locs()
-       odcsvs.append(temp_locs['ods'])
-       pumpcsvs.append(temp_locs['pumps'])
+        temp_locs = morbidostats[starti][0].file_locs()
+        odcsvs.append(temp_locs['ods'])
+        pumpcsvs.append(temp_locs['pumps'])
 
     Process(target = plotter.Plotter, args = (actsys, odcsvs, pumpcsvs, config['MAIN']['hostname'])).start()
 
@@ -234,7 +234,7 @@ def comb_grapher():
     for i in actsys: leg.append('CU'+str(i))
     for i in odcsvs:
         ods.append(pd.read_csv(i,index_col='hour'))
-        ods[-1][['average']].plot(ax=ax,figsize=(7,5))
+        ods[-1][['current']].plot(ax=ax,figsize=(7,5))
     ax.legend(leg)
     ax.set_ylabel('Raw OD')
     ax.set_xlabel('Time(h)')
@@ -246,7 +246,7 @@ def comb_grapher():
     fig2 = plt.figure(dpi=140)
     ax2 = plt.gca()
     for i in ods:
-        i[['average']].divide(float(i.iloc[-1][['maxod']])).plot(ax=ax2,figsize=(7,5))
+        i[['current']].divide(float(i.iloc[-1][['maxod']])).plot(ax=ax2,figsize=(7,5))
     ax2.legend(leg)
     ax2.set_ylabel('Scaled OD')
     ax2.set_xlabel('Time(h)')
@@ -730,7 +730,7 @@ class Morbidostat:
 
             allODs = pd.read_csv(self.outfile_OD, index_col='hour')
 
-            if self.scaling: allODs[['average']] = allODs[['average']]/float(allODs[['maxod']].iloc[-1])
+            if self.scaling: allODs[['current']] = allODs[['current']]/float(allODs[['maxod']].iloc[-1])
             if self.scaling: allODs[['min']] = allODs[['min']]/float(allODs[['maxod']].iloc[-1])
 
             # allODs['hour'] = allODs['time'] - allODs['time'].iloc[0]
@@ -739,7 +739,7 @@ class Morbidostat:
             # print(allODs)
             #fig = plt.figure(dpi=1000)
             plt.rcParams["figure.dpi"] = 200
-            ODplt = (allODs[['average']]).plot()  #figsize=(10,10) in the plot
+            ODplt = (allODs[['current']]).plot()  #figsize=(10,10) in the plot
             # ODplt = (allODs[['current']]).plot()  #figsize=(10,10) in the plot
             ODfig = ODplt.get_figure()
             self.outfile_OD = "%s/%s/%s/ODdata_%s.csv" % (self.root_dir, self.sysstr, self.start_time, self.start_time)
@@ -764,7 +764,7 @@ class Morbidostat:
             # print(allODs)
             #fig = plt.figure(dpi=1000)
             plt.rcParams["figure.dpi"] = 200
-            ODplt = (allODs[['average']]).plot(label='average', color='tab:blue')  #figsize=(10,10) in the plot
+            ODplt = (allODs[['current']]).plot(label='current', color='tab:blue')  #figsize=(10,10) in the plot
             ODplt.set_ylabel(ylabel='Average OD')
             plt.yscale("log")
             lines, labels = ODplt.get_legend_handles_labels()
@@ -794,7 +794,7 @@ class Morbidostat:
 
             pumpa = allpumps[['media','drug','waste']]
             PUplt,PUax = plt.subplots()
-            PUax.plot(allODs[['average']], label= 'average', color='tab:blue')
+            PUax.plot(allODs[['current']], label= 'current', color='tab:blue')
             PUax.plot(allODs[['min']], label= '_nolegend_', color = 'tab:grey', linestyle= ':')
             PUax.set_ylabel(ylabel='Average OD')
             lines, labels = PUax.get_legend_handles_labels()
@@ -827,7 +827,7 @@ class Morbidostat:
             # THREADS GRAPH
 
             plt.rcParams["figure.dpi"] = 200
-            ODthr = (allODs[['average']]).plot(label='average', color='tab:blue')  #figsize=(10,10) in the plot
+            ODthr = (allODs[['current']]).plot(label='current', color='tab:blue')  #figsize=(10,10) in the plot
             ODthr.set_ylabel(ylabel='Average OD')
             lines, labels = ODthr.get_legend_handles_labels()
 
@@ -858,7 +858,7 @@ class Morbidostat:
 
             if self.temp_sensor:
                 plt.rcParams["figure.dpi"] = 200
-                ODthr = (allODs[['average']]).plot(label='average', color='tab:blue')  #figsize=(10,10) in the plot
+                ODthr = (allODs[['current']]).plot(label='current', color='tab:blue')  #figsize=(10,10) in the plot
                 ODthr.set_ylabel(ylabel='Average OD')
                 lines, labels = ODthr.get_legend_handles_labels()
 
@@ -887,7 +887,7 @@ class Morbidostat:
             # DIL RATE GRAPH
 
             plt.rcParams["figure.dpi"] = 200
-            ODthr = (allODs[['average']]).plot(label='average', color='tab:blue')  #figsize=(10,10) in the plot
+            ODthr = (allODs[['current']]).plot(label='current', color='tab:blue')  #figsize=(10,10) in the plot
             ODthr.set_ylabel(ylabel='Average OD')
             lines, labels = ODthr.get_legend_handles_labels()
 
